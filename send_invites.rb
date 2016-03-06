@@ -2,6 +2,7 @@ require "active_support"
 require "active_support/all"
 
 require "./send_emails"
+require 'pry'
 
 require "redis"
 $REDIS = Redis.new
