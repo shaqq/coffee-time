@@ -1,27 +1,18 @@
-require "base64"
-require "mandrill"
-
-# recipients is an array of name email pairs
-# [
-#   ["Daniel", "danielx@fogcreek.com"]
-#   ...
-# ]
+require "sendgrid-ruby"
 
 def send_emails(recipients)
-  recipients.each do |person|
-    others = (recipients - [person])
-    others_names = others.map do |person|
-      "#{person.first} (#{person.last})"
-    end.join " and "
-    # TODO: Can't get multi-way reply-to working
-    # this will cover it for 90% of the time
-    reply_to = others.first.last
-    email = person.last
+  recipient_names = recipients.map(&:first)
+  recipient_first_names = recipient_names.map { |n| n.split.first }
+  recipient_first_names_human = recipient_first_names.join(' & ')
 
-    message = {
-     "text"=> "This week you're meeting with #{others_names} on Wednesday 12pm EST.
+  recipient_emails = recipients.map(&:last)
 
-Get to know your coworkers. Meet up in person or over a hangout, grab a coffee, and chat. Plan to meet for about half an hour and please reschedule if you have a conflict.
+  reply_to = recipient_emails
+
+  message = SendGrid::Mail.new({
+   "text"=> "#{recipient_first_names_human},
+
+You're matched up! Plan to meet for about half an hour and please reschedule if you have a conflict.
 
 Enjoy!
 
