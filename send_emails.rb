@@ -25,29 +25,21 @@ Get to know your coworkers. Meet up in person or over a hangout, grab a coffee, 
 
 Enjoy!
 
-P.S. Email danielx@fogcreek.com with questions, comments or suggestions about CoffeeTime.
+Email shaker@bellycard.com with questions, comments or suggestions for Graymalkin CoffeeTime.
+",
+   "subject"=> "Graymalkin CoffeeTime - #{recipient_first_names_human}",
+   "from"=> "shaker@bellycard.com",
+   "from_name"=> "Shaker Islam",
+   "to" => recipient_emails,
+   "reply_to" => reply_to
+  })
 
-- Mr. CoffeeTime",
-     "subject"=> "CoffeeTime with #{others_names}",
-     "from_email"=> "danielx@fogcreek.com",
-     "from_name"=> "CoffeeTime",
-     "to" => [{
-        "email" => person.last,
-        "name" => person.first,
-        "type" => "to"
-      }],
-      "headers" => {
-        "Reply-To" => reply_to
-      }
-    }
+  sendgrid = SendGrid::Client.new api_key: ENV['SENDGRID_APIKEY']
 
-    mandrill = Mandrill::API.new
-
-    begin
-      result = mandrill.messages.send message
-    rescue Mandrill::Error => e
-      $REDIS.rpush "retries", {person: person, invite: invite, others_names: others_names}.inspect
-      puts "A mandrill error occurred: #{e.class} - #{e.message}"
-    end
+  begin
+    result = sendgrid.send(message)
+  rescue => e
+    $REDIS.rpush "retries", {recipients: recipients}.inspect
+    puts "A sendgrid error occurred: #{e.class} - #{e.message}"
   end
 end
