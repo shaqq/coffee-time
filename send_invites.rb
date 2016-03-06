@@ -19,15 +19,19 @@ people = people_txt.strip.split("\n").map do |line|
   [pieces[0...-1].join(" "), pieces.last]
 end
 
-def good_pairings(people)
-  #TODO: check for no recent duplicates (within the last three weeks)
+previous_people_raw = $REDIS.get('people_arr')
+previous_people = nil
+previous_people = JSON.parse(previous_people_raw) if previous_people_raw
+
+def good_pairings(people, previous_people)
+  return false if people == previous_people
   true
 end
 
 while true do
   people.shuffle!
 
-  break if good_pairings(people)
+  break if good_pairings(people, previous_people)
 end
 
 loner = people.pop if people.size % 2 == 1
@@ -45,6 +49,7 @@ pairings.each_with_index do |pairing, index|
   puts "#{index}: #{pairing.inspect}"
 end
 
+$REDIS.set "people_arr", people.inspect
 $REDIS.set "pairings", pairings.inspect
 
 pairings.each_with_index do |pairing, index|
