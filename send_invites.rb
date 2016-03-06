@@ -68,4 +68,4 @@ end
 
 $REDIS.set "last_ran", Time.now
 $REDIS.set "ran_recently", true
-$REDIS.expire "ran_recently", (1.week.from_now - Time.now).to_i - 7200
+$REDIS.expire "ran_recently", (1.month.from_now - Time.now).to_i - 7200
