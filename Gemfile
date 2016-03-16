@@ -4,8 +4,8 @@ source "https://rubygems.org"
 gem "activesupport"
 gem "sendgrid-ruby"
 gem "redis"
+gem "pry"
 
 group :development do
   gem "foreman"
-  gem "pry"
 end
